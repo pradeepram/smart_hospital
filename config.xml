@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.tp.SmartHospital"
+        version   = "1.0">
+
+  <name>SmartHospital</name>
+  <description>
+    Smart Hospital 
+  </description>
+  <author href="" email="pradeep.pilot@gmail.com">
+    SelvaRam
+  </author>
+
+
+ <access origin="*" />
+ 
+  <preference name="target-device"    value="universal" />
+  <preference name="fullscreen"       value="false" />  
+<preference name="show-splash-screen-spinner" value="true" />
+<preference name="auto-hide-splash-screen" value="true" />
+<preference name="SplashScreenDelay" value="5000" />
+<gap:platform name="android" />
+
+ <icon src="images/drawable-mdpi/mdpi.png"   gap:platform="android"    gap:density="mdpi" />
+  <icon src="images/drawable-hdpi/hdpi.png"   gap:platform="android"    gap:density="hdpi" />
+  <icon src="images/drawable-xhdpi/xhdpi.png"  gap:platform="android"    gap:density="xhdpi" />
+ <icon src="images/drawable-xxhdpi/xxhdpi.png"  gap:platform="android"    gap:density="xxhdpi" />  
+  <icon src="images/logo 64.png"          gap:platform="webos" />
+
+
+<gap:splash src="images/splash/ldpi.png"       gap:platform="android" gap:density="ldpi" />
+    <gap:splash src="images/splash/mdpi.png"       gap:platform="android" gap:density="mdpi" />
+    <gap:splash src="images/splash/hdpi.png"       gap:platform="android" gap:density="hdpi" />
+    <gap:splash src="images/splash/xhdpi.png"      gap:platform="android" gap:density="xhdpi" />
+<gap:splash src="images/splash/xhdpi.png"      gap:platform="android" gap:density="xxhdpi" />
+
+
+</widget>

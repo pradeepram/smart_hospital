@@ -6,14 +6,17 @@
 <title>Smart Hospital Management</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="css/bootstrap-select.css">
-<link rel="stylesheet" href="css/bootstrap-select.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+ <link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
+
 <link rel="stylesheet" href="css/style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> 
 <script src="js/bootstrap-select.js"></script>
-<script src="js/bootstrap-select.min.js"></script>
+<script src="jquery_alert_files/jquery.ui.draggable.js" type="text/javascript"></script>
+ 
+<script src="jquery_alert_files/jquery.alerts.js" type="text/javascript"></script>
 <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
 <script type="text/javascript">
 $(document).ready(function () {
 	var userid = localStorage.getItem('userid');
@@ -23,7 +26,7 @@ $(document).ready(function () {
 	} else {
 	var username=localStorage.getItem('username');
 	  var s1="Welcome ";
-   
+	  jQuery('#datetimepicker').datetimepicker();
     $("#user").text(s1.concat(username));
 	$('.selectpicker').selectpicker();	    
 	var Assigned=1;
@@ -155,6 +158,58 @@ var waiting=2;
 	       	 
 	        }
 	    });
+	 $('#patientid').change(function (){
+   		 debugger;
+   		 var patientid= $('#patientid').val();
+   		 var ids=1;
+   		 var i=1;
+   		 $("label.error").hide();
+   	  $(".error").removeClass("error");
+   		$.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: localStorage.getItem('WcfURL')+"/patient_no.php?identity="+patientid+"&id="+ids,
+			data: "{}",
+           dataType: "JSON",
+		 success: function(data){
+			 debugger;
+			 $("#submit").removeAttr('disabled');
+			 if((data.return1.length >= i) && (data.return2.length>=i) && (data.return3.length>=i)){
+				 if((data.return4[0]=="1") && (data.return5[0]=="0"))
+					 {
+					 jAlert("Patient "+data.return1[0]+" already Registered",'Alert',function(){  });							 
+					 $('#firstName').val(data.return1[0]);
+					 $("#firstName").attr("disabled", "disabled"); 
+					 $('#phoneNumber').val(data.return2[0]);
+					 $("#phoneNumber").attr("disabled", "disabled"); 									
+					 }
+				 else
+					 {
+			 $('#firstName').val(data.return1[0]);
+			 $('#phoneNumber').val(data.return2[0]);
+			 $("#submit1").hide();
+			 $('#example1').val(data.return3[0]);
+					 }
+			 }
+			 else
+				 {
+				 debugger;
+				 $('#firstName').val('');
+				 $('#phoneNumber').val('');
+				 $('#example1').val('');
+				 $("#firstName").removeAttr('disabled');
+				 $("#phoneNumber").removeAttr('disabled');
+				 
+				 
+				 }
+								
+		}	,
+error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        }	
+	   
+        
+		});		
+   	 });                
 	 $("#drdesk").validate({
          
          rules: {         	 
@@ -187,16 +242,15 @@ var waiting=2;
      				data: "{}",
                     dataType: "JSON",
      			 success: function(data){
-     					
-     			alert("Assigned successfully")
-     			location.reload();
+     				jAlert('Patient queued successfully','Success',function(){ location.reload(true); });		
+     			
+     			
      			}	,
      error: function(XMLHttpRequest, textStatus, errorThrown) { 
-     	alert("Patient Queued");
-     	 location.reload();   
+    	 jAlert('Error','Failure',function(){ location.reload(true); });
                  }	     		                    
      			});
-     		 location.reload();
+     		return false; 
          }
 	 }); 
 	}
@@ -281,7 +335,7 @@ margin-left: auto !important;
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"> Smart Hospital</a>
+            <a class="navbar-brand" href="drdesk.html"> Smart Hospital</a>
           </div>
           <div id="navbar" class="navbar-collapse collapse">           		
             <ul class="nav navbar-nav navbar-right">
@@ -314,6 +368,35 @@ margin-left: auto !important;
     <div id="my-tab-content" class="tab-content">
         <div class="tab-pane active" id="red">
              <form id="drdesk">
+               <div class="form-group">
+            <label class=" control-label" for="patientid">Patient Id</label>  
+            <div class="">
+              <input id="patientid" name="patientid" placeholder="Patient Id" class="form-control input-md" type="text">
+              
+            </div>
+          </div>
+              
+       <div class="form-group">
+            <label class=" control-label" for="firstName">Name</label>  
+            <div class="">
+              <input id="firstName" name="firstName" placeholder="Name" class="form-control input-md" type="text" disabled="disabled">
+              
+            </div>
+          </div>
+        <div class="form-group">
+            <label class=" control-label" for="phoneNumber">Mobile Number</label>  
+            <div class="">
+              <input id="phoneNumber" name="phoneNumber" placeholder="Mobile Number" class="form-control input-md" type="number" disabled="disabled">              
+            </div>
+          </div>
+           <div class="form-group">
+		 
+            <label class=" control-label" for="phoneNumber">Appointment date</label>  
+            <div class="">
+            
+              <input id="datetimepicker" name="datetimepicker" placeholder="MM/DD/YYYY" class="form-control input-md " type="text">              
+            </div>
+          </div>
                <fieldset>
 							
 							 <div class="table-responsive">	
@@ -371,4 +454,7 @@ margin-left: auto !important;
 
 
 </body>
+<link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css"/ >
+
+<script src="css/jquery.datetimepicker.js"></script>
 </html>                                		

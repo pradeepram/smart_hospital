@@ -13,7 +13,7 @@
  <link rel="stylesheet" href="css/style.css">
     <!-- Bootstrap Core CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
+<link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
     <!-- MetisMenu CSS -->
     <link href="dist/css/metisMenu.min.css" rel="stylesheet">
 
@@ -31,7 +31,9 @@
  <script src="js/jquery-1.9.1.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> 
-
+<script src="jquery_alert_files/jquery.ui.draggable.js" type="text/javascript"></script>
+ 
+<script src="jquery_alert_files/jquery.alerts.js" type="text/javascript"></script> 
     <!-- Metis Menu Plugin JavaScript -->
     <script src="dist/js/metisMenu.min.js"></script>
 
@@ -41,7 +43,7 @@
       <script type="text/javascript" src="js/jquery.validate.min.js"></script>
          <link rel="stylesheet" href="dist/js/jquery.dataTables.min.css"/>
     <script type="text/javascript" src="dist/js/jquery.dataTables.min.js"></script> 
-
+ <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
         <script type="text/javascript">
             // When the document is ready
             $(document).ready(function () {     
@@ -94,7 +96,7 @@
                           });
                	     },
                	     error: function(Result) {
-               	    	 debugger;                    	 
+               	    	jAlert('Error','Failure',function(){ location.reload(true); });          	 
                	     }
                	 });
             	var username=localStorage.getItem('username');
@@ -151,15 +153,16 @@
             					data: "{}",
                                dataType: "JSON",
             				 success: function(data){
-            				debugger;		
-            				alert("Department Created Successfully");
+            				debugger;	
+            				jAlert('Department Created Successfully','Success',function(){ location.reload(true); });
+            				
             				}	,
              error: function(Result) { 
-            	 debugger;      
-            	 alert("Department Created Successfully");
+            	 jAlert('Error','Failure',function(){ location.reload(true); });
+            	
                             }	            			               	            
              			});	
-            			 location.reload();            	
+            			return false;  	
                     }
                 });
             	});
@@ -215,14 +218,15 @@
                           	     dataType: "JSON",
                           	     success: function(data) {
                           	    	debugger;
-                          	    	alert("Department Updated Successfully");
+                          	    	jAlert('Department Updated Successfully','Success',function(){ location.reload(true); }); 
+                          	    	
                           	     },
                           	     error: function(Result) {
-                          	    	 debugger;    
-                          	    	alert("Department Updated Successfully");
+                          	    	jAlert('Error','Failure',function(){ location.reload(true); });
+                          	    	
                           	     }
                           	 });
-                			 location.reload();            	
+                			 return false;       	
                         }
                     });
                 	});                                
@@ -238,15 +242,14 @@
           	     data: "{}",
           	     dataType: "JSON",
           	     success: function(data) {
-          	    	debugger;
-          	    	alert("Department Deleted Successfully");
+          	    	jAlert('Department Deleted Successfully','Success',function(){ location.reload(true); });          	    	
           	     },
           	     error: function(Result) {
-          	    	 debugger;    
-          	    	alert("Department Deleted Successfully");
+          	    	jAlert('Error','Failure',function(){ location.reload(true); });
+          	    	
           	     }
           	 });
-            location.reload();    
+           return false;
             }
             function editing(e) {    
                 debugger;
@@ -265,7 +268,7 @@
              	    	 $('#dept_desc').val(data.return2[0]);
              	     },
              	     error: function(Result) {
-             	    	 debugger;                    	 
+             	    	jAlert('Error','Failure',function(){ location.reload(true); });                	 
              	     }
              	 });               
                 }
@@ -305,6 +308,22 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
                 input.error {
                     border: 1px solid #FF2323;
                 }
+                 @media only screen
+and (min-device-width : 360px)
+and (max-device-width : 640px) 
+ and (orientation: landscape) {
+.body
+{
+width:75% !important;
+margin-left: auto !important;
+    margin-right: auto !important;
+
+}
+.table
+{
+width:50% !important;
+}
+}
 </style>
 </head>
 
@@ -398,6 +417,7 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
 		  <!--  Dashboard View  -->
 		   <div class="row">
                             <div class="col-md-6 col-md-offset-3">
+                            <div class="body">
    <div class="form-group">
             <label class=" control-label" for="dept_name">Department name</label>  
             <div class="">
@@ -426,7 +446,7 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
 		  </table>  	
 		  </div>							
         </div>
-   
+   </div>
     </div>                                				
             </div>
             <!-- /.row -->

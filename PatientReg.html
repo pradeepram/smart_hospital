@@ -5,27 +5,26 @@
 <title>Smart Hospital Management</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <link rel="stylesheet" href="css/datepicker.css">
+  <link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
   
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
  
-<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"> -->
- <link rel="stylesheet" href="css/style.css">
-<link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
 
+ <link rel="stylesheet" href="css/style.css">
 <script src="jquery_alert_files/jquery.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> 
 <script src="jquery_alert_files/jquery.ui.draggable.js" type="text/javascript"></script>
  
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> 
-<script src="js/jquery-1.9.1.min.js"></script>
 <script src="jquery_alert_files/jquery.alerts.js" type="text/javascript"></script>
-<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
-<script src="js/jquery.bt.min.js"></script>
-<script src="js/bootstrap-datepicker.js" type="text/javascript"></script>
 
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+
+<script src="js/bootstrap-datepicker.js" type="text/javascript"></script>
 <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+      
+
       
           
  
@@ -38,7 +37,7 @@
             	    var ur="index.html"
             	    $(location).attr('href', ur);
             	} else {
-            		 
+            		
             	$("#doctordiv").hide();           
             	$("#testdiv").hide();  
             	 $("#submit1").hide();
@@ -58,6 +57,8 @@
            		 var patientid= $('#patientid').val();
            		 var ids=1;
            		 var i=1;
+           		 $("label.error").hide();
+           	  $(".error").removeClass("error");
            		$.ajax({
                     type: "GET",
                     contentType: "application/json; charset=utf-8",
@@ -68,14 +69,17 @@
 					 debugger;
 					 $("#submit").removeAttr('disabled');
 					 if((data.return1.length >= i) && (data.return2.length>=i) && (data.return3.length>=i)){
-						 if(data.return4[0]=="1")
+						 if((data.return4[0]=="1") && (data.return5[0]=="0"))
 							 {
-							 alert("Patient "+data.return1[0]+" already Registered");
+							 jAlert("Patient "+data.return1[0]+" already Registered",'Alert',function(){  });							 
 							 $('#firstName').val(data.return1[0]);
+							 $("#firstName").attr("disabled", "disabled"); 
 							 $('#phoneNumber').val(data.return2[0]);
+							 $("#phoneNumber").attr("disabled", "disabled"); 
 							 $("#submit").attr("disabled", "disabled");
 							 $("#submit1").show();
 							 $('#example1').val(data.return3[0]);
+							 $("#example1").attr("disabled", "disabled"); 
 							 }
 						 else
 							 {
@@ -91,6 +95,9 @@
 						 $('#firstName').val('');
 						 $('#phoneNumber').val('');
 						 $('#example1').val('');
+						 $("#firstName").removeAttr('disabled');
+						 $("#phoneNumber").removeAttr('disabled');
+						 $("#example1").removeAttr('disabled');
 						 $("#submit").removeAttr('disabled');
 						 }
 										
@@ -118,11 +125,16 @@
   					if((data.return1.length >= i) && (data.return2.length>=i) && (data.return3.length>=i)){
   						 if(data.return4[0]=="1")
 						 {
-						 alert("Patient "+data.return2[0]+" Registered already");
+  							jAlert("Patient "+data.return2[0]+" Registered already",'Success',function(){  });
+						 
 						 $("#submit").attr("disabled", "disabled");
 						 $('#patientid').val(data.return1[0]);
-	  					 $('#firstName').val(data.return2[0]);  					 
+						 $("#patientid").attr("disabled", "disabled"); 
+	  					 $('#firstName').val(data.return2[0]); 
+	  					 $("#firstName").attr("disabled", "disabled"); 
 	  					 $('#example1').val(data.return3[0]);
+	  					 $("#example1").attr("disabled", "disabled");
+	  					 $("#phoneNumber").attr("disabled", "disabled"); 
 	  					$("#submit1").show();
 	  					
 						 }
@@ -137,7 +149,8 @@
   					 else
   						 {
   						 debugger;
-  						$("#submit").removeAttr('disabled');
+  						
+  						
   						 }
   								
   				}	,
@@ -180,15 +193,20 @@
                 
                 $("#submit").click(function() {
                 	
+                	jQuery.validator.addMethod('phoneUS', function(phone_number, element) {
+                	    phone_number = phone_number.replace(/\s+/g, ''); 
+                	    return this.optional(element) || phone_number.length > 9 &&
+                	        phone_number.match(/^(1-?)?(\([2-9]\d{2}\)|[2-9]\d{2})-?[2-9]\d{2}-?\d{4}$/);
+                	}, 'Please enter a valid phone number.');
+                	jQuery.validator.addMethod("minDate", function (value, element) {
+                	    var now = new Date();
+                	    var myDate = new Date(value);
+                	    return this.optional(element) || myDate < now;
 
-                $.validator.addMethod("maxDate", function(value, element) {
-                	debugger;
-                    var curDate = new Date();
-                    var inputDate = new Date(value);
-                    if (inputDate > curDate)
-                        return true;
-                    return false;
-                }, "Invalid Date!");
+                	    // else alert('Das passt nicht!' + mD +  '   ' + nowdate);
+
+                	});
+
                 $.validator.addMethod("alpha", function(value, element) {
             	    return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
             	 });
@@ -209,9 +227,11 @@
                         	 number: true,
                         	minlength: 10,
                             maxlength: 12,
+                            phoneUS:true
                         },
                         example1: {
-                            required: true                            
+                            required: true,
+                            minDate:true
                         },      
                         optradio:{
                         	required:true
@@ -245,9 +265,13 @@
                             required: "Please enter your phone number",
                             number:"Please enter numbers",
                             minlength:"Please enter minimum 10 digits",
-                            maxlength:"Please enter maximum 12 digits"
+                            maxlength:"Please enter maximum 12 digits",
+                            phoneUS:"Please enter valid phone number"
                             },
-                            example1:"Please enter your Date of Birth",
+                            example1:{
+                            	required:"Please enter your Date of Birth",
+                            	minDate:"Please enter date before today"
+                            },
                             optradio:"Please select an option",
                             doctor:"Please select a doctor",
                             tblChk:"Please select a test"
@@ -285,7 +309,7 @@
             		    	var doctor = $("#doctor option:selected").text();
             		    	var department = $("#department option:selected").text();
             		    	}        			
-            	
+            		   
             			$.ajax({
                                 type: "GET",
                                 contentType: "application/json; charset=utf-8",
@@ -293,17 +317,18 @@
             					data: "{}",
                                dataType: "JSON",
             				 success: function(data){
-            				debugger;		
-            				alert("Patient Registered..");
-            				location.reload();
+            				debugger;	
+            				
+            				jAlert('Patient Registered successfully','Success',function(){ location.reload(true); });   				
+            				
             				}	,
              error: function(XMLHttpRequest, textStatus, errorThrown) { 
             	 debugger;
-            	 alert("Patient Registered Success..");
-            	 location.reload();
-                            }	            			               	            
+            	 jAlert('Error','Failure',function(){ location.reload(true); });
+                            }	  
+            				
              			});	
-            			 location.reload();            
+            			return false; 
             			           	
                     }
                 });
@@ -321,19 +346,20 @@
         				data: "{}",
         				dataType: "JSON",
         				success: function(response){
-        			debugger;		
-        			location.reload();
+        			debugger;	
+        			jAlert('Checked Out Successfully','Success',function(){ location.reload(true); });
+        			
         			}	,
         error: function(jqXHR, textStatus, errorThrown) { 
         	debugger;	
-        
-        	alert("Checked Out Successfully")
+        	 jAlert('Error','Failure',function(){ location.reload(true); });
+        	
                     }	
         			
         			});	
-        		
+        		return false; 
         			
-        		 location.reload();
+        		
                     });
                 
                  
@@ -372,7 +398,7 @@
                        }         
                     },
                     error: function(Result) {
-                   	 debugger;                    	 
+                    	jAlert('Error','Failure',function(){ location.reload(true); });             	 
                     }
                 });
             	
@@ -417,12 +443,20 @@
             	             }
             	     },
             	     error: function(Result) {
-            	    	 debugger;                    	 
+            	    	 jAlert('Error','Failure',function(){ location.reload(true); });                	 
             	     }
             	 });
             }
         </script>
 <style type="text/css">
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
    form label.error { display:inline;
 font:10px Tahoma,sans-serif;
 color:#ED7476;
@@ -483,6 +517,7 @@ margin-left: auto !important;
     margin-right: auto !important;
 
 } 
+
 </style>
 </head>
 <body>
@@ -495,7 +530,7 @@ margin-left: auto !important;
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"> Smart Hospital</a>
+            <a class="navbar-brand" href="PatientReg.html"> Smart Hospital</a>
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             
@@ -514,7 +549,7 @@ margin-left: auto !important;
         </div><!--/.container-fluid -->
       </nav>
 <div class="container">
- <form id="patientreg" method="POST" action=""> 
+ <form id="patientreg" method="POST" action="" onkeypress="return event.keyCode != 13;"> 
 
 	  <div class="jumbotron" style="background-color : #FFFFFF ">
 	  <div class="row">
@@ -551,7 +586,7 @@ margin-left: auto !important;
             <label class=" control-label" for="phoneNumber">Date of Birth</label>  
             <div class="">
             
-              <input id="example1" name="example1" placeholder="Date of Birth" class="form-control input-md dp" type="text">              
+              <input id="example1" name="example1" placeholder="MM/DD/YYYY" class="form-control input-md dp" type="text">              
             </div>
           </div>
       

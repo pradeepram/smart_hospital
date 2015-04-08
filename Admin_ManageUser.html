@@ -13,7 +13,7 @@
  <link rel="stylesheet" href="css/style.css">
     <!-- Bootstrap Core CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
+<link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
     <!-- MetisMenu CSS -->
     <link href="dist/css/metisMenu.min.css" rel="stylesheet">
 
@@ -31,7 +31,9 @@
  <script src="js/jquery-1.9.1.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> 
-
+<script src="jquery_alert_files/jquery.ui.draggable.js" type="text/javascript"></script>
+ 
+<script src="jquery_alert_files/jquery.alerts.js" type="text/javascript"></script> 
     <!-- Metis Menu Plugin JavaScript -->
     <script src="dist/js/metisMenu.min.js"></script>
 
@@ -41,7 +43,7 @@
       <script type="text/javascript" src="js/jquery.validate.min.js"></script>
          <link rel="stylesheet" href="dist/js/jquery.dataTables.min.css"/>
     <script type="text/javascript" src="dist/js/jquery.dataTables.min.js"></script> 
-
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
         <script type="text/javascript">
 $(document).ready(function(){	
 var userid = localStorage.getItem('userid');
@@ -96,7 +98,7 @@ $.ajax({
      });    
     },
     error: function(Result) {
-   	 debugger;
+    	jAlert('Error','Failure',function(){ location.reload(true); });       
    	 
     }
 });
@@ -169,15 +171,13 @@ $("#update").click(function() {
           	     data: "{}",
           	     dataType: "JSON",
           	     success: function(data) {
-          	    	debugger;
-          	    	alert("User Updated Successfully");
+          	    	jAlert('User Updated Successfully','Success',function(){ location.reload(true); });  	          	    
           	     },
           	     error: function(Result) {
-          	    	 debugger;    
-          	    	alert("User Updated Successfully");
+          	    	jAlert('Error','Failure',function(){ location.reload(true); });                 	    	
           	     }
           	 });
-			 location.reload();            	
+			return false;    	
         }
     });
 	});
@@ -195,13 +195,14 @@ function deleteing(e) {
   	     data: "{}",
   	     dataType: "JSON",
   	     success: function(data) {
+  	    	jAlert('User Deleted Successfully','Success',function(){ location.reload(true); });  	    	
   	    	debugger;
   	     },
   	     error: function(Result) {
-  	    	 debugger;                    	 
+  	    	jAlert('Error','Failure',function(){ location.reload(true); });                    	 
   	     }
   	 });
-    location.reload();    
+   return false;
     }
 function editing(e) {    
     debugger;
@@ -224,7 +225,7 @@ function editing(e) {
 	    	 $('#userid').text(localStorage.getItem('userid'));	 
  	     },
  	     error: function(Result) {
- 	    	 debugger;                    	 
+ 	    	jAlert('Error','Failure',function(){ location.reload(true); });                  	 
  	     }
  	 });               
     }
@@ -282,6 +283,19 @@ width:15% !important;
 margin-left: auto !important;
     margin-right: auto !important;
 
+}
+}
+ @media only screen
+and (min-device-width : 360px)
+and (max-device-width : 640px) 
+ and (orientation: landscape) {
+.table-responsive
+{
+width:80% !important;
+margin-left: auto !important;
+    margin-right: auto !important;
+
+}
 }
 </style>
 </head>

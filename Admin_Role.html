@@ -13,6 +13,7 @@
  <link rel="stylesheet" href="css/style.css">
     <!-- Bootstrap Core CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
 
     <!-- MetisMenu CSS -->
     <link href="dist/css/metisMenu.min.css" rel="stylesheet">
@@ -31,7 +32,9 @@
  <script src="js/jquery-1.9.1.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> 
-
+<script src="jquery_alert_files/jquery.ui.draggable.js" type="text/javascript"></script>
+ 
+<script src="jquery_alert_files/jquery.alerts.js" type="text/javascript"></script> 
     <!-- Metis Menu Plugin JavaScript -->
     <script src="dist/js/metisMenu.min.js"></script>
 
@@ -41,7 +44,7 @@
       <script type="text/javascript" src="js/jquery.validate.min.js"></script>
          <link rel="stylesheet" href="dist/js/jquery.dataTables.min.css"/>
     <script type="text/javascript" src="dist/js/jquery.dataTables.min.js"></script> 
-
+ <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
         <script type="text/javascript">
             // When the document is ready
             $(document).ready(function () {     
@@ -95,7 +98,7 @@
                           });
                	     },
                	     error: function(Result) {
-               	    	 debugger;                    	 
+               	    	 jAlert('Error','Failure',function(){ location.reload(true); });           	                	 
                	     }
                	 });
             	var username=localStorage.getItem('username');
@@ -152,14 +155,13 @@
             					data: "{}",
                                dataType: "JSON",
             				 success: function(data){
-            					 alert("Role Created successfully");
-            				
+            					 jAlert('Role Created successfully','Success',function(){ location.reload(true); });            					 
             				}	,
              error: function(Result) { 
-            	 alert("Role Created successfully");           	
+            	 jAlert('Error','Failure',function(){ location.reload(true); });           	 
                             }	            			               	            
              			});	
-            			 location.reload();            	
+            			return false;        	
                     }
                 });
             	});
@@ -214,14 +216,14 @@
                           	     data: "{}",
                           	     dataType: "JSON",
                           	     success: function(data) {
-                          	    	alert("Role Updated successfully");
+                          	    	jAlert('Role Updated successfully','Success',function(){ location.reload(true); });                          	    	
                           	     },
                           	     error: function(Result) {
-                          	    	 debugger;      
-                          	    	alert("Role Updated successfully");
+                          	    	 jAlert('Error','Failure',function(){ location.reload(true); });           	 
+                          	    	
                           	     }
                           	 });
-                			 location.reload();            	
+                			return false;         	
                         }
                     });
                 	});                                
@@ -238,14 +240,15 @@
           	     dataType: "JSON",
           	     success: function(data) {
           	    	debugger;
-          	    	alert("Role deleted successfully");
+          	    	jAlert('Role deleted successfully','Success',function(){ location.reload(true); });
+          	    	
           	     },
           	     error: function(Result) {
-          	    	 debugger;   
-          	    	 alert("Role deleted successfully");
+          	    	 jAlert('Error','Failure',function(){ location.reload(true); });           	 
+          	    	
           	     }
           	 });
-            location.reload();    
+          return false;   
             }
             function editing(e) {    
                 debugger;
@@ -264,7 +267,7 @@
              	    	 $('#role_desc').val(data.return2[0]);
              	     },
              	     error: function(Result) {
-             	    	 debugger;                    	 
+             	    	 jAlert('Error','Failure',function(){ location.reload(true); });           	                	 
              	     }
              	 });               
                 }
@@ -304,6 +307,30 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
                 input.error {
                     border: 1px solid #FF2323;
                 }
+                @media only screen
+and (min-device-width : 360px)
+and (max-device-width : 640px) 
+ and (orientation: landscape) {
+.body
+{
+width:69% !important;
+margin-left: auto !important;
+    margin-right: auto !important;
+
+}
+}
+ @media only screen
+and (min-device-width : 360px)
+and (max-device-width : 640px) 
+ and (orientation: portrait) {
+.table-responsive
+{
+width:34% !important;
+margin-left: auto !important;
+    margin-right: auto !important;
+
+}
+}
 </style>
 </head>
 
@@ -397,6 +424,7 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
 		  <!--  Dashboard View  -->
 		   <div class="row">
                             <div class="col-md-6 col-md-offset-3">
+                            <div class="body">
    <div class="form-group">
             <label class=" control-label" for="role_name">Role name</label>  
             <div class="">
@@ -428,7 +456,7 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
 		  </div>							
         </div>
        
-   
+   </div>
     </div>                                				
             </div>
             <!-- /.row -->

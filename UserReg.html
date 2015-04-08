@@ -14,7 +14,7 @@
  <link rel="stylesheet" href="css/style.css">
     <!-- Bootstrap Core CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
+<link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
     <!-- MetisMenu CSS -->
     <link href="dist/css/metisMenu.min.css" rel="stylesheet">
 
@@ -35,7 +35,9 @@
 
     <!-- Metis Menu Plugin JavaScript -->
     <script src="dist/js/metisMenu.min.js"></script>
-
+<script src="jquery_alert_files/jquery.ui.draggable.js" type="text/javascript"></script>
+ 
+<script src="jquery_alert_files/jquery.alerts.js" type="text/javascript"></script> 
       <!-- Custom Theme JavaScript -->
     <script src="dist/js/sb-admin-2.js"></script>
   
@@ -43,7 +45,7 @@
          <link rel="stylesheet" href="dist/js/jquery.dataTables.min.css"/>
     <script type="text/javascript" src="dist/js/jquery.dataTables.min.js"></script> 
  <script src="js/bootstrap-datepicker.js"></script>
-        
+        <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
         <script type="text/javascript">
 $(document).ready(function(){	
 var userid = localStorage.getItem('userid');
@@ -101,6 +103,58 @@ $.ajax({
    	 
     }
 });
+$('#inputEmail').change(function (){
+	var email = $("#inputEmail").val();	
+	var ids=1;
+	$.ajax({
+	    type: "GET",
+	    contentType: "text/plain",
+	    url: localStorage.getItem('WcfURL')+"/email.php?identity="+email+"&id="+ids,
+	    data: "{}",
+	    dataType: "JSON",
+	    success: function(data) {
+	       debugger;
+	       if(data.return1.length != 0)
+	    	   {
+	    	   jAlert('Email Already Exists','Alert',function(){ location.reload(true); });  
+	    	   }
+	       else
+	    	   {
+	    	   
+	    	   }
+	    },
+	    error: function(Result) {
+	   	 debugger;
+	   	 
+	    }
+	});
+});
+$('#UserName').change(function (){
+	var uname = $("#UserName").val();
+	var ids=2;
+	$.ajax({
+	    type: "GET",
+	    contentType: "text/plain",
+	    url: localStorage.getItem('WcfURL')+"/email.php?identity="+uname+"&id="+ids,
+	    data: "{}",
+	    dataType: "JSON",
+	    success: function(data) {
+	       debugger;
+	       if(data.return1.length != 0)
+	    	   {
+	    	   jAlert('UserName Already Exists','Alert',function(){ $("#UserName").val(''); });  
+	    	   }
+	       else
+	    	   {
+	    	   
+	    	   }
+	    },
+	    error: function(Result) {
+	   	 debugger;
+	   	 
+	    }
+	});
+});
 $('#Roles').change(function (){
 	debugger;
 	$("#departmentdiv").hide();
@@ -133,7 +187,7 @@ $.ajax({
        }         
     },
     error: function(Result) {
-   	 debugger;                    	 
+    	jAlert('Error','Failure',function(){ location.reload(true); });              	 
     }
 });
 		}
@@ -164,7 +218,7 @@ $.ajax({
 		       }         
 		    },
 		    error: function(Result) {
-		   	 debugger;                    	 
+		    	jAlert('Error','Failure',function(){ location.reload(true); });           	 
 		    }
 		});
 	}
@@ -174,21 +228,55 @@ $.ajax({
 		}
 });
 
-$('#submit').click(function(){     
+$('#submit').click(function(){  
+	jQuery.validator.addMethod("validEmail", function(value, element) 
+			{
+			    if(value == '') 
+			        return true;
+			    var temp1;
+			    temp1 = true;
+			    var ind = value.indexOf('@');
+			    var str2=value.substr(ind+1);
+			    var str3=str2.substr(0,str2.indexOf('.'));
+			    if(str3.lastIndexOf('-')==(str3.length-1)||(str3.indexOf('-')!=str3.lastIndexOf('-')))
+			        return false;
+			    var str1=value.substr(0,ind);
+			    if((str1.lastIndexOf('_')==(str1.length-1))||(str1.lastIndexOf('.')==(str1.length-1))||(str1.lastIndexOf('-')==(str1.length-1)))
+			        return false;
+			    str = /(^[a-zA-Z0-9]+[\._-]{0,1})+([a-zA-Z0-9]+[_]{0,1})*@([a-zA-Z0-9]+[-]{0,1})+(\.[a-zA-Z0-9]+)*(\.[a-zA-Z]{2,3})$/;
+			    temp1 = str.test(value);
+			    return temp1;
+			}, "Please enter valid email.");
+	jQuery.validator.addMethod('phoneUS', function(phone_number, element) {
+	    phone_number = phone_number.replace(/\s+/g, ''); 
+	    return this.optional(element) || phone_number.length > 9 &&
+	        phone_number.match(/^(1-?)?(\([2-9]\d{2}\)|[2-9]\d{2})-?[2-9]\d{2}-?\d{4}$/);
+	}, 'Please enter a valid phone number.');
+	jQuery.validator.addMethod("noSpace", function(value, element) { 
+		  return value.indexOf(" ") < 0 && value != ""; 
+		}, "No space please and don't leave it empty");
+
 	$.validator.addMethod("alpha", function(value, element) {
 	    return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
 	 });
+	jQuery.validator.addMethod("specialChar", function(value, element) {
+	     return this.optional(element) || /([0-9a-zA-Z\s])$/.test(value);
+	  }, "Please Fill Correct Value in Field.");
 	 $("#userreg").validate({         
          rules: {
          	email: {
-                 required: true                 
+                 required: true,
+                 validEmail: true
              },
              username: {
-                 required: true
+                 required: true,
+                 specialChar : true
              },
              pwd: {                        	
              	required: true,
-             	 minlength: 6,
+             	 minlength: 8,
+             	 maxlength:18,
+             	 noSpace: true,
              },
              
              firstname: {                        	
@@ -199,18 +287,27 @@ $('#submit').click(function(){
                   required: true,
                   number: true,
                   minlength: 10,
-                  maxlength: 12,
+                  maxlength: 10,
+                  phoneUS:true
               }, 
               genderRadios:{
               	required:true
               },
          },
          messages: {
-        	 email: "Please enter a valid email",
-        	 username:"Please enter a username",
+        	 email:{
+        		 required: "Please enter a e-mail id",
+        		 minlength: "please enter valid e-mail id"
+        		 },
+        	 username:{
+        		 required:"Please enter a username",
+        		 specialChar: "Special Characters are not allowed"
+        	 },
         	 pwd:{
         		 required: "Please enter a password",
-        		 minlength: "Minimum length is 6"
+        		 minlength: "Minimum length is 8",
+        		 noSpace: "No spaces are allowed",
+        		 maxlength: "Please enter not more than 18"
         		 },
         	 firstname:{
         		 required: "Please enter your name",
@@ -220,7 +317,8 @@ $('#submit').click(function(){
                  required: "Please enter your age",
                  number:"Please enter numbers",
                  minlength:"Please enter minimum 10 digits",
-                 maxlength:"Please enter maximum 12 digits"
+                 maxlength:"Please enter maximum 10 digits",
+                 phoneUS:"Please enter valid phone number"
                  },
                  genderRadios:"Please select your gender" 
          },
@@ -255,19 +353,17 @@ $('#submit').click(function(){
                     url: localStorage.getItem('WcfURL')+"/user_registration.php?email="+email+"&pwd="+password+"&fname="+fname+"&phone="+phone+"&gen="+gender+"&username="+uname+"&role="+role+"&depart="+department+"&doc="+doctor,
 					data: "{}",
                    dataType: "JSON",
-				 success: function(data){
-				debugger;		
-				 alert("User created successfully");
-				 location.reload();
+				 success: function(response){
+				debugger;	
+				jAlert('User created successfully','Success',function(){ location.reload(true); });     	
+			
 				}	,
  error: function(XMLHttpRequest, textStatus, errorThrown) { 
- debugger;
- alert("User created successfully");
- location.reload();
-                }
-				
+ debugger; 
+ jAlert('Error','Failure',function(){ location.reload(true); });
+                }				
  			});	
-			 location.reload();
+			 return false;
          }
 	 });
 		
@@ -277,6 +373,14 @@ $('#submit').click(function(){
 });
 </script>    
         <style type="text/css">
+        input[type='number'] {
+    -moz-appearance:textfield;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
     .bs-example{
     	margin: 20px;
     }
@@ -407,7 +511,7 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
                              <div class="form-group">
             <label class=" control-label" for="email">Email</label>  
             <div class="">
-              <input id="inputEmail" name="email" placeholder="Email" class="form-control input-md" type="text">
+              <input id="inputEmail" name="email" placeholder="Email" class="form-control input-md" type="email">
               
             </div>
           </div>
@@ -436,7 +540,7 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
           <div class="form-group">
             <label class=" control-label" for="phoneNumber">Phone Number</label>  
             <div class="">
-              <input id="phoneNumber" name="phone" placeholder="Phone Number" class="form-control input-md" type="text">
+              <input id="phoneNumber" name="phone" placeholder="Phone Number" class="form-control input-md" type="number" >
               
             </div>
           </div>         

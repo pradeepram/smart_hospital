@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Hospital Management</title>
+ <link rel="stylesheet" href="css/datepicker.css">
+ <link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="css/style.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> 
+<script src="jquery_alert_files/jquery.ui.draggable.js" type="text/javascript"></script>
+ 
+<script src="jquery_alert_files/jquery.alerts.js" type="text/javascript"></script>
+  
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+ <script src="js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+	var userid = localStorage.getItem('userid');
+	if (userid == "0") {
+	    var ur="index.html"
+	    $(location).attr('href', ur);
+	} else {
+		 $('#example1').datepicker({
+             format: "mm/dd/yyyy"
+         });  
+         $('.dp').on('change', function () {
+ 			$('.datepicker').hide();
+ 			});
+    $('#example2').datepicker({
+        format: "mm/dd/yyyy"
+    });  
+    $('#example3').datepicker({
+        format: "mm/dd/yyyy"
+    });  
+    $('#example1').hide();
+    $('#example2').hide();
+    $('#example3').hide();
+    $('#deviceno').hide();	
+	 $.ajax({
+         type: "GET",
+         contentType: "text/plain",
+         url: localStorage.getItem('WcfURL')+"/DoctorPatientList.php?userid="+userid,
+         data: "{}",
+         dataType: "JSON",
+         success: function(data) {
+        	 debugger;
+        	 if(data.firstname.length=="0")
+        		 {
+        		 $("#submit").attr("disabled", "disabled");
+        		 }else
+        			 {
+        	 $("#Patient thead").remove();
+	            $("#Patient tr").remove();
+	            $("#Patient th").remove();
+	            $("#Patient tbody").remove();
+	            $("#Patient td").remove();
+	            var tr;
+	             tr = $("<thead>");
+	             tr.append("<tr><th style='text-align:left'></th><th style='text-align:left'></th></tr>"); // bind table header row
+	             $("#Patient").append(tr);
+	             tr.append("</thead>");
+	             $("#Patient").append(tr);
+	             var tbody = $("<tbody>");
+	             $("#Patient").append(tbody);
+	             $("#Patient").append(tr);
+	             tr = $("<tr></tr>");
+	             
+	             for (var i = 0; i < data.firstname.length; i++) {
+	             	debugger;
+	                 tr = $("<tr></tr>");
+	                 tr.append("<td style='width:7%'><input type='radio' name='patient' id='patient'  value=" + data.firstname[i] + " >" + "</td><td>" + data.firstname[i] + "</td>");
+	                 $("#Patient").append(tr);
+	                 $('#Patient').append(tbody);
+	             }
+	             var s1="Welcome ";
+	             var str=data.docname;
+	             $("#linkId").text(s1.concat(str));
+        			 }
+         },
+         error: function(Result) {
+        	 jAlert('Error','Failure',function(){ location.reload(true); });
+        	 
+         }
+     });
+	 jQuery.validator.addMethod("minDate", function (value, element) {
+  	    var now = new Date();
+  		
+  	
+  	  now.setDate(now.getDate() - 1);
+  	  
+  	    var myDate = new Date(value);
+  	 
+  	    return this.optional(element) || myDate > now;
+  	    // else alert('Das passt nicht!' + mD +  '   ' + nowdate);
+  	});		 
+	 
+	 $("#doctor").validate({         		
+         rules: {
+        	 patient: {
+                 required: true                
+             },
+             optradio: {
+                 required: true
+             },
+             surgery: {                        	
+             	required: true             	
+             },
+             phar: {
+                 required: true                            
+             },                 
+             tblChk: {
+                 required: true
+             },
+            device: {                        	
+              	required: true             	
+              },
+             example1:{
+            	 minDate:true,
+            	required:function(element) {
+                    return $("input:radio[name='optradio']:checked").val() == '1';
+                },
+                
+             },
+             example2:{
+            	 minDate:true,
+             	required:function(element) {
+                     return $("input:radio[name='surgery']:checked").val() == '1';
+                 },
+                
+              },
+              deviceno:{
+             	
+             	required:function(element) {
+                     return $("input:radio[name='device']:checked").val() == '1';
+                 },
+                 
+              },
+             
+         },
+         messages: {
+             patient: "Please select patient",
+             optradio: "Please select admission",
+             surgery:  "Please select surgery",
+             phar:"Please select pharmacy",    
+                 example1:{
+                 	required:"Please enter Admission date",
+                 	minDate:"Please enter valid date"
+                 },
+                 example2:{
+                  	required:"Please enter Admission date",
+                  	minDate:"Please enter valid date"
+                  },
+                 tblChk:"Please select any test " ,               
+                	 device:  "Please select device", 
+                	 deviceno:"Please enter a device number"
+         },
+         errorPlacement: function(error, element) {
+             if ( element.is(":radio") ) {
+             	error.insertAfter( element.parent() );
+             }
+             else if(element.is(":checkbox"))
+             {
+             	error.insertBefore( element.parent() );
+             }
+             else { // This is the default behavior of the script
+                 error.insertAfter( element );
+             }
+         },
+         
+         submitHandler: function(form) {
+        	 debugger;
+             var pname =$('input[name="patient"]:checked').val();
+             var test=$('input[type="checkbox"]:checked').val();
+             if(test=="on")
+             	{
+             var selectedLanguage = new Array();
+             $('input[id="tblChk"]:checked').each(function() {
+                 selectedLanguage.push(this.value);
+             });
+             	}
+             else
+            	 {
+            	 test="off"
+            	 }
+             var admission =$('input[name="optradio"]:checked').val();
+             if(admission=="1")
+             	{
+             	var admitdate=$("#example1").val();
+             	var dischargedate=$("#example3").val();
+             	}
+             var surgery =$('input[name="surgery"]:checked').val();
+             if(surgery=="1")
+         	{
+         	var surgerydate=$("#example2").val();
+         	}
+             var phar =$('input[name="phar"]:checked').val();                                       
+     		$('#submit').attr('disabled',false);
+     		
+     	     var device=$('input[name="device"]:checked').val();
+     	     var deviceid=$("#deviceno").val();
+     		debugger;     		     		
+     		$.ajax({
+                     type: "GET",
+                     contentType: "application/json; charset=utf-8",
+                     url: localStorage.getItem('WcfURL')+"/Doctor.php?p_name="+pname+"&userid="+userid+"&test="+test+"&admission="+admission+"&admitdate="+admitdate+"&surgery="+surgery+"&surgerydate="+surgerydate+"&phar="+phar+"&child="+JSON.stringify(selectedLanguage)+"&dischargedate="+dischargedate+"&device="+device+"&deviceid="+deviceid,
+     				data: "{}",
+                    dataType: "JSON",
+     			 success: function(data){
+     				jAlert('Patient Visited successfully','Success',function(){ location.reload(true); });	
+     			
+     			}	,
+     error: function(XMLHttpRequest, textStatus, errorThrown) { 
+    	 jAlert('Error','Failure',function(){ location.reload(true); });
+                 }	     		                    
+     			});		
+     		return false; 
+         }
+	 }); 
+	}
+});
+function ListOfTest(element)
+{			
+	debugger;
+ var id2=4;
+ $.ajax({
+     type: "GET",
+     contentType: "text/plain",
+     url: localStorage.getItem('WcfURL')+"/DoctorTest.php?id="+id2,
+     data: "{}",
+     dataType: "JSON",
+     success: function(data) {
+    	 debugger;
+    	 $("#Test thead").remove();
+            $("#Test tr").remove();
+            $("#Test th").remove();
+            $("#Test tbody").remove();
+            $("#Test td").remove();
+            var tr;
+             tr = $("<thead>");
+             tr.append("<tr><th style='text-align:left'></th><th style='text-align:left'></th></tr>"); // bind table header row
+             $("#Test").append(tr);
+             tr.append("</thead>");
+             $("#Test").append(tr);
+             var tbody = $("<tbody>");
+             $("#Test").append(tbody);
+             $("#Test").append(tr);
+             tr = $("<tr></tr>");
+             
+             for (var i = 0; i < data.name.length; i++) {
+             	debugger;
+                 tr = $("<tr></tr>");
+                 tr.append("<td style='width:7%'><input type='checkbox' name='tblChk' id='tblChk' onclick='popup(" + data.id[i] + ")' value=" + data.id[i] + " >" + "</td><td>" + data.name[i] + "</td>");
+                 $("#Test").append(tr);
+                 $('#Test').append(tbody);
+             }
+     },
+     error: function(Result) {
+    	 jAlert('Error','Failure',function(){ location.reload(true); });               	 
+     }
+ });
+}
+function Admission(element)
+{
+	$('#example1').show();	
+	$('#example3').show();	
+}
+function AdmissionNo(element)
+{
+	$('#example1').hide();	
+	$('#example3').hide();	
+}
+function Surgery(element)
+{
+	$('#example2').show();	
+}
+function SurgeryNo(element)
+{
+	$('#example2').hide();	
+}
+function Device(element)
+{
+	
+	$('#deviceno').show();	
+}
+function DeviceNo(element)
+{
+	
+	$('#deviceno').hide();	
+}
+</script>
+<style>
+.borderless tbody tr td, .borderless tbody tr th, .borderless thead tr th {
+    border: none;
+}
+ input.error, select.error {
+      background: #ffd1cc;
+}
+form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; display:inline;}form input.error,form input.error:hover,form input.error:focus,form select.error,form textarea.error{border:1px solid #ED7476;background:#FFEDED}
+#errorContainer {
+                    display: none;
+                    overflow: auto;
+                    background-color: #FFDDDD;
+                    border: 1px solid #FF2323;
+                    padding-top: 1;
+                }
+
+                #errorContainer label {
+                    float: none;
+                    width: auto;
+                }
+
+                input.error {
+                    border: 1px solid #FF2323;
+                }
+                 @media only screen
+and (min-device-width : 768px)
+and (max-device-width : 1024px)
+ and (orientation: landscape) {
+.login-panel
+{
+width:85% !important;
+margin-left: auto !important;
+    margin-right: auto !important;
+
+}
+}
+ @media screen and (min-device-width: 1024px) and (min-device-height: 768px){
+.row
+{
+width:60% !important;
+margin-left: auto !important;
+    margin-right: auto !important;
+
+}
+@media screen and (min-device-width: 1280px) and (min-device-height: 1024px){
+.row
+{
+width:60% !important;
+margin-left: auto !important;
+    margin-right: auto !important;
+
+}                
+</style>
+
+</head>
+<body>
+<nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="DoctorScreen.html"> Smart Hospital</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+            
+              <li><a href="#"></a></li>
+            </ul>
+			
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="index.html">Log out</a></li>
+            </ul>
+             <ul class="nav navbar-nav navbar-right">             
+			<li>		
+			<a href="#" id="linkId"></a>
+			</li>
+			</ul> 
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+		    <div class="container">			
+						
+<div class="jumbotron" style="background-color : #FFFFFF ">	  
+        <div class="row">
+            <div class="col-md-11 col-md-offset-1">
+                <div class="login-panel panel panel-default" style="border-style: hidden;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" align="center">Doctor Screen</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form id="doctor">
+                            <fieldset>		
+                            
+                            <table width="100%">			
+                            <tr >	
+                            <td style="width: 100%">	
+                            <h5>Patients Waiting</h5>
+                            <div class="table-responsive">																											
+							<table class="table borderless table-condensed" data-show-header="false"  id="Patient" >	                        
+		                    </table>
+		                    </div>
+		                    </td>		
+		                    </tr>
+		                    <tr>							
+								<td style="width: 100%">	
+								<div class="checkbox">
+                                <label><input type="checkbox" name="txt"  onchange="ListOfTest(this)">Test</label>
+                                </div>	
+                                <div class="table-responsive">																										
+								 <table class="table borderless table-condensed" data-show-header="false"  id="Test" >	                        
+		                         </table>  	
+		                         </div>
+		                         </td>
+		                         </tr>
+		                         <tr>
+		                         <td><b><h5>Admission</h5></b></td>		                         
+		                         </tr>
+		                         <tr>
+		                         <td><label class="radio-inline"><input type="radio" name="optradio" value="1" onchange="Admission(this)">Yes</label>
+          							 <label class="radio-inline"><input type="radio" name="optradio" value="0" onchange="AdmissionNo(this)">No</label>
+          							 <br>                  							
+                                     <input  type="text" class="form-control input-md dp" placeholder="Admit Date"  id="example1" name="example1">
+                                     <br>
+                                     <input  type="text" class="form-control input-md dp" placeholder="Discharge Date"  id="example3" name="example3"></td>          							 		                         
+		                         </tr>
+		                          <tr>
+		                         <td><b><h5>Surgery</h5></b></td>		                         
+		                         </tr>
+		                         <tr>
+		                         <td><label class="radio-inline"><input type="radio" name="surgery" value="1" onchange="Surgery(this)">Yes</label>
+          							 <label class="radio-inline"><input type="radio" name="surgery" value="0" onchange="SurgeryNo(this)">No</label>
+          							 <br>
+          							 <input  type="text" class="form-control input-md dp" placeholder="Surgery Date"  id="example2" name="example2"></td>        		                         
+		                         </tr>
+		                            <tr>
+		                         <td><b><h5>Pharmacy(Prescription)</h5></b></td>		                         
+		                         </tr>
+		                         <tr>
+		                         <td><label class="radio-inline"><input type="radio" name="phar" value="1">Yes</label>
+          							 <label class="radio-inline"><input type="radio" name="phar" value="0">No</label></td>		                         
+		                         </tr>
+		                          
+		                           <tr>
+		                         <td><b><h5>Device</h5></b></td>		                         
+		                         </tr>
+		                         <tr>
+		                         <td><label class="radio-inline"><input type="radio" name="device" value="1" onchange="Device(this)">Yes</label>
+          							 <label class="radio-inline"><input type="radio" name="device" value="0" onchange="DeviceNo(this)">No</label>
+          							 <br>
+          							 <input  type="text" class="form-control input-md" placeholder="Device Id"  id="deviceno" name="deviceno"></td>        		                         
+		                         </tr>
+		                         </table>						
+								<br>
+                                <!-- Change this to a button or input when using this as a form -->
+                                <button class="btn btn-lg btn-success btn-block" name="submit" id="submit">Submit</button>
+                                <!-- <a href="#" class="btn btn-lg btn-success btn-block" onclick="return btntest_onclick()">Submit</a>-->
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+    </div>
+
+
+</body>
+</html>                                		

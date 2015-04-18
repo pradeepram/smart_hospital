@@ -1,0 +1,19 @@
+
+.jumbotron{
+    background-color:#6DBDD6;
+ 
+    color: #272323 !important;
+}
+
+.btn{
+background-color:#58B075;
+    color:white;
+}
+.btn-primary {
+    color: #FFF;
+    background-color: #58B075 ! important;
+    border-color: #58B075 !important;
+}
+.select {
+   background: #333333;
+}

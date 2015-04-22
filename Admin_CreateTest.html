@@ -71,7 +71,7 @@
                	            $("#Test td").remove();
                	            var tr;
                	             tr = $("<thead>");
-               	             tr.append("<tr><th style='text-align:left'>Test</th><th style='text-align:left'></th></tr>"); // bind table header row
+               	             tr.append("<tr><th style='text-align:left'>Test</th><th style='text-align:left'>Amount</th><th style='text-align:left'></th></tr>"); // bind table header row
                	             $("#Test").append(tr);
                	             tr.append("</thead>");
                	             $("#Test").append(tr);
@@ -83,7 +83,7 @@
                	             for (var i = 0; i < data.name.length; i++) {
                	             	debugger;
                	                 tr = $("<tr></tr>");
-               	                 tr.append("<td>" + data.name[i] + "</td><td><href='#'  data-rel='popup' onclick='editing(" + data.id[i] + ") '><img src='images/edit.png' style='border: 0; float: left; margin-right: 15px' height='12' width='12' /></a>" + "</td><td><href='#' name='tbljobid' data-rel='popup' onclick='deleteing(" + data.id[i] + ")'><img src='images/delete.png' style='border: 0; float: left; margin-right: 15px' height='12' width='12' /></a>"+"</td>");
+               	                 tr.append("<td>" + data.name[i] + "</td><td>" + data.amount[i] + "</td><td><href='#'  data-rel='popup' onclick='editing(" + data.id[i] + ") '><img src='images/edit.png' style='border: 0; float: left; margin-right: 15px' height='12' width='12' /></a>" + "</td><td><href='#' name='tbljobid' data-rel='popup' onclick='deleteing(" + data.id[i] + ")'><img src='images/delete.png' style='border: 0; float: left; margin-right: 15px' height='12' width='12' /></a>"+"</td>");
                	                 $("#Test").append(tr);
                	                 $('#Test').append(tbody);
                	             }
@@ -107,18 +107,27 @@
                 	$.validator.addMethod("alpha", function(value, element) {
                 	    return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
                 	 });
+                	
                 $("#createtest").validate({                
                     rules: {
                     	test: {
                             required: true,
                             alpha:true
-                        },                        
+                        },
+                        amount:{
+                        	 required: true,
+                        	 number: true
+                        }
                     },
                     messages: {                        
                    test: {
                             required: "Please enter Test name",
                             alpha:"Please enter valid test name"                            
-                            },                                                        
+                            }, 
+                            amount: {
+                                required: "Please enter amount",
+                                number:"Please enter valid amount"                            
+                                },        
                     },
                     errorPlacement: function(error, element) {
                         if ( element.is(":radio") ) {
@@ -135,12 +144,14 @@
                     submitHandler: function(form) {
                     	debugger;          
                     	var testname = $("#test").val();	
+                    	var amount=$("#amount").val();
+                    	 var scan=$('input[name="scan"]:checked').val();
                     	var id=3;
                     	var tstid=0;
             			$.ajax({
                                 type: "GET",
                                 contentType: "application/json; charset=utf-8",
-                                url: localStorage.getItem('WcfURL')+"/deleteTest.php?testid="+testname+"&id="+id+"&tstid="+tstid,
+                                url: localStorage.getItem('WcfURL')+"/deleteTest.php?testid="+testname+"&id="+id+"&tstid="+tstid+"&amount="+amount+"&scan="+scan,
             					data: "{}",
                                dataType: "JSON",
             				 success: function(data){
@@ -157,18 +168,32 @@
                 });
             	});
                 
-                $("#update").click(function() {               
+                $("#update").click(function() {     
+                	$.validator.addMethod("alpha", function(value, element) {
+                	    return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
+                	 });
+                	
+
                     $("#createtest").validate({                    
                         rules: {
                         	test: {
-                                required: true                               
-                            },                        
+                                required: true,
+                                alpha:true
+                            },  
+                            amount:{
+                           	 required: true,
+                           	number: true
+                           }
                         },
                         messages: {                            
                             test: {
                                      required: "Please enter Test name",
                                      alpha:"Please enter valid test name"                            
-                                     },                                                        
+                                     }, 
+                                     amount: {
+                                         required: "Please enter amount",
+                                         number:"Please enter valid amount"                            
+                                         },   
                              },
                              errorPlacement: function(error, element) {
                                  if ( element.is(":radio") ) {
@@ -184,13 +209,14 @@
                              },                                   
                         submitHandler: function(form) {
                         	debugger;     
-                        	var testname = $("#test").val();		
+                        	var testname = $("#test").val();	
+                        	var amount=$("#amount").val();
                         	var tstid=localStorage.getItem('tstid');
                         	var idss=2;
                             $.ajax({
                           	     type: "GET",
                           	     contentType: "text/plain",
-                          	     url: localStorage.getItem('WcfURL')+"/deleteTest.php?testid="+testname+"&id="+idss+"&tstid="+tstid,
+                          	     url: localStorage.getItem('WcfURL')+"/deleteTest.php?testid="+testname+"&id="+idss+"&tstid="+tstid+"&amount="+amount,
                           	     data: "{}",
                           	     dataType: "JSON",
                           	     success: function(data) {
@@ -243,6 +269,8 @@
              	     success: function(data) {
              	    	debugger;
              	    	 $('#test').val(data.return1[0]);
+             	    	$('#amount').val(data.return2[0]);
+             	    	$('#scan').hide();
              	     },
              	     error: function(Result) {
              	    	 jAlert('Error','Failure',function(){ location.reload(true); });             	 
@@ -356,6 +384,12 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
                                  <li>
                                     <a href="Admin_ManageUser.html">Manage User</a>
                                 </li>
+                                  <li>
+                                    <a href="DrCharges.html">Dr Charges</a>
+                                </li>
+                                <li>
+                                    <a href="Bed.html">Beds</a>
+                                </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>                  
@@ -385,8 +419,21 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
               <input id="test" name="test" placeholder="Test name" class="form-control input-md" type="text">              
             </div>
           </div>
-         <br>
-       
+        
+          <div class="form-group">
+            <label class=" control-label" for="test">Amount</label>  
+            <div class="">
+              <input id="amount" name="amount" placeholder="Amount" class="form-control input-md" type="text">              
+            </div>
+          </div>
+        <div class="input-group">
+           
+			<div class="input-group" style="display:block" id="scan">
+								
+          					    <label class="radio-inline" ><input type="checkbox" name="scan" value="1" >Scan</label>
+								</div>
+        </div>      
+         <br> 
         <div id="buttondiv">
         <button class="btn btn-lg btn-success btn-block" name="submit" id="submit">Add Test</button>
         </div>

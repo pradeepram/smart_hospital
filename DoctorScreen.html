@@ -25,17 +25,26 @@ $(document).ready(function () {
 	    var ur="index.html"
 	    $(location).attr('href', ur);
 	} else {
+		var username=localStorage.getItem('username');
+		 var s1="Welcome ";
+		 $("#user").text(s1.concat(username));
 		 $('#example1').datepicker({
              format: "mm/dd/yyyy"
          });  
+		
          $('.dp').on('change', function () {
  			$('.datepicker').hide();
  			});
     $('#example2').datepicker({
         format: "mm/dd/yyyy"
     });  
+    $('#example3').datepicker({
+        format: "mm/dd/yyyy"
+    });  
     $('#example1').hide();
     $('#example2').hide();
+    $('#example3').hide();
+    $('#deviceno').hide();	
 	 $.ajax({
          type: "GET",
          contentType: "text/plain",
@@ -68,7 +77,7 @@ $(document).ready(function () {
 	             for (var i = 0; i < data.firstname.length; i++) {
 	             	debugger;
 	                 tr = $("<tr></tr>");
-	                 tr.append("<td style='width:7%'><input type='radio' name='patient' id='patient'  value=" + data.firstname[i] + " >" + "</td><td>" + data.firstname[i] + "</td>");
+	                 tr.append("<td style='width:7%'><input type='radio' name='patient' id='patient'  value=\"" + data.firstname[i] + "\" >" + "</td><td>" + data.firstname[i] + "</td>");
 	                 $("#Patient").append(tr);
 	                 $('#Patient').append(tbody);
 	             }
@@ -84,7 +93,12 @@ $(document).ready(function () {
      });
 	 jQuery.validator.addMethod("minDate", function (value, element) {
   	    var now = new Date();
+  		
+  	
+  	  now.setDate(now.getDate() - 1);
+  	  
   	    var myDate = new Date(value);
+  	 
   	    return this.optional(element) || myDate > now;
   	    // else alert('Das passt nicht!' + mD +  '   ' + nowdate);
   	});		 
@@ -106,6 +120,9 @@ $(document).ready(function () {
              tblChk: {
                  required: true
              },
+            device: {                        	
+              	required: true             	
+              },
              example1:{
             	 minDate:true,
             	required:function(element) {
@@ -119,6 +136,13 @@ $(document).ready(function () {
                      return $("input:radio[name='surgery']:checked").val() == '1';
                  },
                 
+              },
+              deviceno:{
+             	
+             	required:function(element) {
+                     return $("input:radio[name='device']:checked").val() == '1';
+                 },
+                 
               },
              
          },
@@ -135,8 +159,9 @@ $(document).ready(function () {
                   	required:"Please enter Admission date",
                   	minDate:"Please enter valid date"
                   },
-                 tblChk:"Please select any test "                
-                 
+                 tblChk:"Please select any test " ,               
+                	 device:  "Please select device", 
+                	 deviceno:"Please enter a device number"
          },
          errorPlacement: function(error, element) {
              if ( element.is(":radio") ) {
@@ -162,10 +187,15 @@ $(document).ready(function () {
                  selectedLanguage.push(this.value);
              });
              	}
+             else
+            	 {
+            	 test="off"
+            	 }
              var admission =$('input[name="optradio"]:checked').val();
              if(admission=="1")
              	{
              	var admitdate=$("#example1").val();
+             	var dischargedate=$("#example3").val();
              	}
              var surgery =$('input[name="surgery"]:checked').val();
              if(surgery=="1")
@@ -174,11 +204,14 @@ $(document).ready(function () {
          	}
              var phar =$('input[name="phar"]:checked').val();                                       
      		$('#submit').attr('disabled',false);
+     		
+     	     var device=$('input[name="device"]:checked').val();
+     	     var deviceid=$("#deviceno").val();
      		debugger;     		     		
      		$.ajax({
                      type: "GET",
                      contentType: "application/json; charset=utf-8",
-                     url: localStorage.getItem('WcfURL')+"/Doctor.php?p_name="+pname+"&userid="+userid+"&test="+test+"&admission="+admission+"&admitdate="+admitdate+"&surgery="+surgery+"&surgerydate="+surgerydate+"&phar="+phar+"&child="+JSON.stringify(selectedLanguage),
+                     url: localStorage.getItem('WcfURL')+"/Doctor.php?p_name="+pname+"&userid="+userid+"&test="+test+"&admission="+admission+"&admitdate="+admitdate+"&surgery="+surgery+"&surgerydate="+surgerydate+"&phar="+phar+"&child="+JSON.stringify(selectedLanguage)+"&dischargedate="+dischargedate+"&device="+device+"&deviceid="+deviceid,
      				data: "{}",
                     dataType: "JSON",
      			 success: function(data){
@@ -238,10 +271,12 @@ function ListOfTest(element)
 function Admission(element)
 {
 	$('#example1').show();	
+	$('#example3').show();	
 }
 function AdmissionNo(element)
 {
 	$('#example1').hide();	
+	$('#example3').hide();	
 }
 function Surgery(element)
 {
@@ -250,6 +285,16 @@ function Surgery(element)
 function SurgeryNo(element)
 {
 	$('#example2').hide();	
+}
+function Device(element)
+{
+	
+	$('#deviceno').show();	
+}
+function DeviceNo(element)
+{
+	
+	$('#deviceno').hide();	
 }
 </script>
 <style>
@@ -330,7 +375,7 @@ margin-left: auto !important;
             </ul>
              <ul class="nav navbar-nav navbar-right">             
 			<li>		
-			<a href="#" id="linkId"></a>
+			<a href="#" id="user"></a>
 			</li>
 			</ul> 
           </div><!--/.nav-collapse -->
@@ -377,7 +422,9 @@ margin-left: auto !important;
 		                         <td><label class="radio-inline"><input type="radio" name="optradio" value="1" onchange="Admission(this)">Yes</label>
           							 <label class="radio-inline"><input type="radio" name="optradio" value="0" onchange="AdmissionNo(this)">No</label>
           							 <br>                  							
-                                     <input  type="text" class="form-control input-md dp" placeholder="Admit Date"  id="example1" name="example1"></td>          							 		                         
+                                     <input  type="text" class="form-control input-md dp" placeholder="Admit Date"  id="example1" name="example1">
+                                     <br>
+                                     <input  type="text" class="form-control input-md dp" placeholder="Discharge Date"  id="example3" name="example3"></td>          							 		                         
 		                         </tr>
 		                          <tr>
 		                         <td><b><h5>Surgery</h5></b></td>		                         
@@ -394,6 +441,16 @@ margin-left: auto !important;
 		                         <tr>
 		                         <td><label class="radio-inline"><input type="radio" name="phar" value="1">Yes</label>
           							 <label class="radio-inline"><input type="radio" name="phar" value="0">No</label></td>		                         
+		                         </tr>
+		                          
+		                           <tr>
+		                         <td><b><h5>Device</h5></b></td>		                         
+		                         </tr>
+		                         <tr>
+		                         <td><label class="radio-inline"><input type="radio" name="device" value="1" onchange="Device(this)">Yes</label>
+          							 <label class="radio-inline"><input type="radio" name="device" value="0" onchange="DeviceNo(this)">No</label>
+          							 <br>
+          							 <input  type="text" class="form-control input-md" placeholder="Device Id"  id="deviceno" name="deviceno"></td>        		                         
 		                         </tr>
 		                         </table>						
 								<br>

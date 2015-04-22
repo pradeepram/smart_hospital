@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <link rel="stylesheet" href="css/datepicker.css">
   <link href="jquery_alert_files/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
-  
+  <link rel="stylesheet" type="text/css" href="css/jAlert-v2-min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
  
@@ -18,11 +18,12 @@
 <script src="jquery_alert_files/jquery.ui.draggable.js" type="text/javascript"></script>
  
 <script src="jquery_alert_files/jquery.alerts.js" type="text/javascript"></script>
-
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+ <link rel="stylesheet" type="text/css" href="js/jAlert-v2-min.js">
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
 
 <script src="js/bootstrap-datepicker.js" type="text/javascript"></script>
-<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+
       
 
       
@@ -37,11 +38,12 @@
             	    var ur="index.html"
             	    $(location).attr('href', ur);
             	} else {
-            		
+            		$("#eme").hide();
             	$("#doctordiv").hide();           
             	$("#testdiv").hide();  
             	 $("#submit1").hide();
-            	$("#departmentdiv").hide();  
+            	$("#departmentdiv").hide(); 
+            	$("#Updatediv").hide();
             	$('#example1').datepicker({maxDate: +7});
             	var username=localStorage.getItem('username');
             	  var s1="Welcome "; 	            
@@ -69,24 +71,41 @@
 					 debugger;
 					 $("#submit").removeAttr('disabled');
 					 if((data.return1.length >= i) && (data.return2.length>=i) && (data.return3.length>=i)){
+						 debugger;
 						 if((data.return4[0]=="1") && (data.return5[0]=="0"))
 							 {
+							 debugger;
 							 jAlert("Patient "+data.return1[0]+" already Registered",'Alert',function(){  });							 
 							 $('#firstName').val(data.return1[0]);
 							 $("#firstName").attr("disabled", "disabled"); 
 							 $('#phoneNumber').val(data.return2[0]);
 							 $("#phoneNumber").attr("disabled", "disabled"); 
-							 $("#submit").attr("disabled", "disabled");
+							 $("#submit").hide();
 							 $("#submit1").show();
 							 $('#example1').val(data.return3[0]);
 							 $("#example1").attr("disabled", "disabled"); 
+							 if(data.return6[0]=="1")
+								 {
+							 $("#Updatediv").show();
+								 }
+							 else
+								 {
+								 $("#Updatediv").hide();
+								 
+								 }
 							 }
 						 else
 							 {
+							 debugger;
 					 $('#firstName').val(data.return1[0]);
+					 $("#firstName").attr("disabled", "disabled"); 
 					 $('#phoneNumber').val(data.return2[0]);
+					 $("#phoneNumber").attr("disabled", "disabled"); 
 					 $("#submit1").hide();
 					 $('#example1').val(data.return3[0]);
+					 $("#example1").attr("disabled", "disabled"); 
+					 $("#Updatediv").hide();
+					 $("#submit").show();
 							 }
 					 }
 					 else
@@ -98,7 +117,8 @@
 						 $("#firstName").removeAttr('disabled');
 						 $("#phoneNumber").removeAttr('disabled');
 						 $("#example1").removeAttr('disabled');
-						 $("#submit").removeAttr('disabled');
+						 $("#submit").show();
+						 $("#Updatediv").hide();
 						 }
 										
 				}	,
@@ -127,7 +147,7 @@
 						 {
   							jAlert("Patient "+data.return2[0]+" Registered already",'Success',function(){  });
 						 
-						 $("#submit").attr("disabled", "disabled");
+						 $("#submit").hide();
 						 $('#patientid').val(data.return1[0]);
 						 $("#patientid").attr("disabled", "disabled"); 
 	  					 $('#firstName').val(data.return2[0]); 
@@ -141,8 +161,12 @@
 					 else
 						 {
   					 $('#patientid').val(data.return1[0]);
-  					 $('#firstName').val(data.return2[0]);  					 
+  					 $("#patientid").attr("disabled", "disabled"); 
+  					 $('#firstName').val(data.return2[0]);  
+  					 $("#firstName").attr("disabled", "disabled"); 
   					 $('#example1').val(data.return3[0]);
+  					 $("#example1").attr("disabled", "disabled"); 
+  					 $("#phoneNumber").attr("disabled", "disabled"); 
   					$("#submit1").hide();
 						 }
   					 }
@@ -190,14 +214,48 @@
                  }	   			      	            
   			});		
                 });
-                
+                $("#update").click(function() {
+                	debugger;
+                	 var emergency=$('input[name="emergency"]:checked').val();
+                	 var emergency_value=$('input[name="tbleme"]:checked').val();
+                	 var patientid = $("#patientid").val();
+                	
+                	 if(emergency_value==undefined)
+                		 {
+                		 debugger;
+                		 jAlert('Please select a emergency criteria','Success',function(){  });  
+                		
+                		 }
+                	 else
+                		 {
+                	$.ajax({
+                        type: "GET",
+                        contentType: "application/json; charset=utf-8",
+                        url: localStorage.getItem('WcfURL')+"/patient_emergency_update.php?emergency="+emergency+"&emergency_value="+emergency_value+"&userid="+userid+"&patient_id="+patientid,
+    					data: "{}",
+                       dataType: "JSON",
+    				 success: function(data){
+    				debugger;	
+    				
+    				jAlert('Patient Emergency Updated successfully','Success',function(){ location.reload(true); });   				
+    				
+    				}	,
+     error: function(XMLHttpRequest, textStatus, errorThrown) { 
+    	 debugger;
+    	 jAlert('Error','Failure',function(){ location.reload(true); });
+                    }	  
+    				
+     			});	
+    			return false; 
+                		 } 	
+                });
                 $("#submit").click(function() {
                 	
-                	jQuery.validator.addMethod('phoneUS', function(phone_number, element) {
-                	    phone_number = phone_number.replace(/\s+/g, ''); 
-                	    return this.optional(element) || phone_number.length > 9 &&
-                	        phone_number.match(/^(1-?)?(\([2-9]\d{2}\)|[2-9]\d{2})-?[2-9]\d{2}-?\d{4}$/);
-                	}, 'Please enter a valid phone number.');
+                	jQuery.validator.addMethod("phoneUS", function(phone_number, element) {
+                	    phone_number = phone_number.replace(/\s+/g, "");
+                	    return this.optional(element) || phone_number.length > 9 && 
+                	    phone_number.match(/^((\+[7-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/);
+                	}, "<br />Please specify a valid phone number");
                 	jQuery.validator.addMethod("minDate", function (value, element) {
                 	    var now = new Date();
                 	    var myDate = new Date(value);
@@ -226,7 +284,7 @@
                         	required: true,
                         	 number: true,
                         	minlength: 10,
-                            maxlength: 12,
+                            maxlength: 10,
                             phoneUS:true
                         },
                         example1: {
@@ -236,11 +294,15 @@
                         optradio:{
                         	required:true
                         },
+                        gender:{
+                        	required:true
+                        },
                         doctor: {
                             required: function(element) {
                                 return $("input:radio[name='optradio']:checked").val() == '1';
                             }
                         },
+                        
                         ddpdoc: {
                         	required: function(element) {
                                 return $("input:radio[name='optradio']:checked").val() == '1';
@@ -257,6 +319,7 @@
                                 return $("input:radio[name='optradio']:checked").val() == '0';
                             }
                         },
+                        
                     },
                     messages: {
                         firstName: "Please enter your first name",
@@ -265,7 +328,7 @@
                             required: "Please enter your phone number",
                             number:"Please enter numbers",
                             minlength:"Please enter minimum 10 digits",
-                            maxlength:"Please enter maximum 12 digits",
+                            maxlength:"Please enter maximum 10 digits",
                             phoneUS:"Please enter valid phone number"
                             },
                             example1:{
@@ -273,6 +336,7 @@
                             	minDate:"Please enter date before today"
                             },
                             optradio:"Please select an option",
+                            gender:"Please select gender",
                             doctor:"Please select a doctor",
                             tblChk:"Please select a test"
                             
@@ -291,8 +355,11 @@
                     },
                     submitHandler: function(form) {
                     	debugger;
+                    	var emergency_value=$('input[name="tbleme"]:checked').val();
+                    	var gender=$('input[name="gender"]:checked').val();
                     	var fname = $("#firstName").val();		
-        				
+                    	 var vip=$('input[name="optradio1"]:checked').val();
+                    	 var emergency=$('input[name="emergency"]:checked').val();
             			var phone = $("#phoneNumber").val();	
             			var dob = $("#example1").val();
             			var patientid = $("#patientid").val();
@@ -309,11 +376,11 @@
             		    	var doctor = $("#doctor option:selected").text();
             		    	var department = $("#department option:selected").text();
             		    	}        			
-            		   
+            		  
             			$.ajax({
                                 type: "GET",
                                 contentType: "application/json; charset=utf-8",
-                                url: localStorage.getItem('WcfURL')+"/patient_reg.php?fname="+fname+"&ph="+phone+"&dob="+dob+"&userid="+userid+"&patent_id="+patientid+"&doctor="+doctor+"&test="+JSON.stringify(selectedLanguage)+"&department="+department,
+                                url: localStorage.getItem('WcfURL')+"/patient_reg.php?fname="+fname+"&ph="+phone+"&dob="+dob+"&userid="+userid+"&patent_id="+patientid+"&doctor="+doctor+"&test="+JSON.stringify(selectedLanguage)+"&department="+department+"&vip="+vip+"&gender="+gender+"&emergency="+emergency+"&emergency_value="+emergency_value,
             					data: "{}",
                                dataType: "JSON",
             				 success: function(data){
@@ -446,6 +513,58 @@
             	    	 jAlert('Error','Failure',function(){ location.reload(true); });                	 
             	     }
             	 });
+            }
+            function emergency1(element)
+            {         
+            	debugger;
+            	$("#eme").show();
+            	 var emergencys=$('input[name="emergency"]:checked').val();
+            	 if(emergencys==undefined)
+            		 {
+            		 $("#eme").hide();
+            		 }
+            	 else
+            		 {
+            		 
+            		 
+            	var id21=1;
+           	 $.ajax({
+           	     type: "GET",
+           	     contentType: "text/plain",
+           	     url: localStorage.getItem('WcfURL')+"/emergency_field.php?id="+id21,
+           	     data: "{}",
+           	     dataType: "JSON",
+           	     success: function(data) {
+           	    	 debugger;
+           	    	 $("#emergen thead").remove();
+           	            $("#emergen tr").remove();
+           	            $("#emergen th").remove();
+           	            $("#emergen tbody").remove();
+           	            $("#emergen td").remove();
+           	            var tr;
+           	             tr = $("<thead>");
+           	             tr.append("<tr><th style='text-align:left'></th><th style='text-align:left'></th></tr>"); // bind table header row
+           	             $("#emergen").append(tr);
+           	             tr.append("</thead>");
+           	             $("#emergen").append(tr);
+           	             var tbody = $("<tbody>");
+           	             $("#emergen").append(tbody);
+           	             $("#emergen").append(tr);
+           	             tr = $("<tr></tr>");
+           	             
+           	             for (var i = 0; i < data.name.length; i++) {
+           	             	debugger;
+           	                 tr = $("<tr></tr>");
+           	                 tr.append("<td><input type='radio' name='tbleme' id='tbleme' onclick='popup(" + data.value[i] + ")' value=" + data.value[i] + " >" + "" + data.name[i] + "</td>");
+           	                 $("#emergen").append(tr);
+           	                 $('#emergen').append(tbody);
+           	             }
+           	     },
+           	     error: function(Result) {
+           	    	 jAlert('Error','Failure',function(){ location.reload(true); });                	 
+           	     }
+           	 });
+            		 }
             }
         </script>
 <style type="text/css">
@@ -589,7 +708,14 @@ margin-left: auto !important;
               <input id="example1" name="example1" placeholder="MM/DD/YYYY" class="form-control input-md dp" type="text">              
             </div>
           </div>
-      
+       <div class="input-group">
+           
+			<div class="input-group" style="display:block">
+								<label class="radio-inline"><input type="radio" name="gender" value="Male" >Male</label>
+          					    <label class="radio-inline"><input type="radio" name="gender" value="Female" >Female</label>
+          					   
+								</div>
+        </div>       
       
        
         <br>
@@ -600,8 +726,20 @@ margin-left: auto !important;
 			<div class="input-group" style="display:block">
 								<label class="radio-inline"><input type="radio" name="optradio" value="1" onchange="doc(this)">Doctor</label>
           					    <label class="radio-inline"><input type="radio" name="optradio" value="0" onchange="test(this)">Lab</label>
+          					    <label class="radio-inline" ><input type="checkbox" name="optradio1" value="1" >VIP</label>    
+          					    <label class="radio-inline" ><input type="checkbox" name="emergency" value="1" onchange="emergency1(this)">Emergency</label>      					    
 								</div>
-        </div>          
+        </div>       
+       
+       <div class="input-group" id="eme">
+           
+			<div class="input-group" style="display:block">
+								
+          					     <table class="table borderless table-condensed" data-show-header="false"  id="emergen" >	                        
+		  </table>  
+								</div>
+        </div>     
+               
         <div class="form-group" id="departmentdiv">
             <label class=" control-label" for="department">Department</label>
             <div class="">
@@ -630,7 +768,9 @@ margin-left: auto !important;
         </div>
         <br>
         <button class="btn btn-lg btn-success btn-block" name="submit" id="submit">Submit</button>
-   
+    <div id="Updatediv">
+        <button class="btn btn-lg btn-success btn-block" name="update" id="update">Update</button>
+        </div>
     </div>
     
     </div>

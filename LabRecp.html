@@ -173,9 +173,10 @@ var patient = $("#ortho").val();
                         tr = $("<tr></tr>");
 	                        for (var i = 0; i < data.childname.length; i++) {
 	                        	debugger;
-	                        	 
+	                        	
 	                            tr = $("<tr></tr>");
-	                            tr.append("<td><input type='checkbox' name='tblChk' id='tblChk' onclick='popup(" + data.childname[i] + ")' value=" + data.cid[i] + " >" + "</td><td>" + data.childname[i] + "</td>");
+	                            
+	                            tr.append("<td><input type='checkbox' name='tblChk' id='tblChk' onclick='popup(" + data.childname[i] + " )' value=" + data.cid[i] + ">" + "</td><td>" + data.childname[i] + "</td>");
 	                            $("#Test").append(tr);
 	                            $('#Test').append(tbody);
 	                        }	

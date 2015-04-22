@@ -28,7 +28,11 @@ $(document).ready(function () {
 	  var s1="Welcome ";
 	  jQuery('#datetimepicker').datetimepicker();
     $("#user").text(s1.concat(username));
-	$('.selectpicker').selectpicker();	    
+	$('.selectpicker').selectpicker();	 
+	 $('.dp').on('change', function () {
+		
+			$('.xdsoft_datetimepicker xdsoft_ xdsoft_noselect ').hide();
+			});
 	var Assigned=1;
 	 $.ajax({
         type: "GET",
@@ -36,9 +40,7 @@ $(document).ready(function () {
         url: localStorage.getItem('WcfURL')+"/DrDeskPatientList.php?userid="+userid+"&id="+Assigned,
         data: "{}",
         dataType: "JSON",
-        success: function(data) {
-        	
-           
+        success: function(data) {        	           
             $("#Test thead").remove();
             $("#Test tr").remove();
             $("#Test th").remove();
@@ -56,14 +58,12 @@ $(document).ready(function () {
              tr = $("<tr></tr>");
              if(data.firstname.length >= "1")
       	   {
-             for (var i = 0; i < data.firstname.length; i++) {
-             	
+             for (var i = 0; i < data.firstname.length; i++) {             	
                  tr = $("<tr class='highlight'></tr>");
-                 tr.append("<td style='width:7%'><input type='radio' name='tblChk' id='tblChk' value=" + data.firstname[i] + " >" + "</td><td>" + data.firstname[i] + "-" +data.p_id[i] +"</td><td >" + data.TIMEONLY[i] + "</td><td>" +data.TotalTime[i] + "</td>");
+                 tr.append("<td style='width:7%'><input type='radio' name='tblChk' id='tblChk' value=" + data.p_id[i]+"-"+data.admission[i] + " >" + "</td><td>" + data.firstname[i] + "-" +data.p_id[i] +"</td><td >" + data.TIMEONLY[i] + "</td><td>" +data.TotalTime[i] + "</td>");
                  $("#Test").append(tr);
                  $('#Test').append(tbody);
-             }
-            	
+             }            	
         	   }
            else
         	   {
@@ -134,7 +134,7 @@ var waiting=2;
 	            $("#Visited td").remove();
 	            var tr;
 	             tr = $("<thead>");
-	             tr.append("<tr><th style='text-align:left'>Name & ID</th><th style='text-align:left'>InTime</th><th style='text-align:left'>TimeSpent</th></tr>"); // bind table header row
+	             tr.append("<tr><th style='text-align:left'>Name & ID</th><th style='text-align:left'>OutTime</th><th style='text-align:left'>TimeSpent</th><th style='text-align:left'>View</th></tr>"); // bind table header row
 	             $("#Visited").append(tr);
 	             tr.append("</thead>");
 	             $("#Visited").append(tr);
@@ -146,9 +146,95 @@ var waiting=2;
 	             for (var i = 0; i < data.firstname.length; i++) {
 	             	
 	                 tr = $("<tr class='highlight'></tr>");
-	                 tr.append("<td>" + data.firstname[i] + "-" +data.p_id[i] + "</td><td >" + data.TIMEONLY[i] + "</td><td>" +data.TotalTime[i] + "</td>");
+	                 tr.append("<td>" + data.firstname[i] + "-" +data.p_id[i]  + "</td><td >" + data.TIMEONLY[i] + "</td><td>" +data.TotalTime[i] + "</td><td><href='#'  data-rel='popup' onclick='editing(" + data.p_id[i] + ") '><img src='images/view.png' style='border: 0; float: left; margin-right: 15px' height='12' width='12' /></a>" + "</td>");
+	                
 	                 $("#Visited").append(tr);
 	                 $('#Visited').append(tbody);
+	             }
+	            	
+	            
+	        },
+	        error: function(Result) {
+	       	 
+	       	 
+	        }
+	    });
+	 var outpatient=4;
+	 $.ajax({
+	        type: "GET",
+	        contentType: "text/plain",
+	        url: localStorage.getItem('WcfURL')+"/DrDeskPatientList.php?userid="+userid+"&id="+outpatient,
+	        data: "{}",
+	        dataType: "JSON",
+	        success: function(data) {
+	        	
+	           
+	            $("#OutPatient thead").remove();
+	            $("#OutPatient tr").remove();
+	            $("#OutPatient th").remove();
+	            $("#OutPatient tbody").remove();
+	            $("#OutPatient td").remove();
+	            var tr;
+	             tr = $("<thead>");
+	             tr.append("<tr><th style='text-align:left'>Name & ID</th><th style='text-align:left'>InTime</th><th style='text-align:left'>OutTime</th></tr>"); // bind table header row
+	             $("#OutPatient").append(tr);
+	             tr.append("</thead>");
+	             $("#OutPatient").append(tr);
+	             var tbody = $("<tbody>");
+	             $("#OutPatient").append(tbody);
+	             $("#OutPatient").append(tr);
+	             tr = $("<tr></tr>");
+	             
+	             for (var i = 0; i < data.firstname.length; i++) {
+	             	
+	                 tr = $("<tr class='highlight'></tr>");
+	                 tr.append("<td>" + data.firstname[i] + "-" +data.p_id[i]  + "</td><td >" + data.TIMEONLY[i] + "</td><td>" +data.TotalTime[i] + "</td>");
+	                
+	                 $("#OutPatient").append(tr);
+	                 $('#OutPatient').append(tbody);
+	             }
+	            	
+	            
+	        },
+	        error: function(Result) {
+	       	 
+	       	 
+	        }
+	    });
+	 
+	 var follow=5;
+	 $.ajax({
+	        type: "GET",
+	        contentType: "text/plain",
+	        url: localStorage.getItem('WcfURL')+"/DrDeskPatientList.php?userid="+userid+"&id="+follow,
+	        data: "{}",
+	        dataType: "JSON",
+	        success: function(data) {
+	        	debugger;
+	           
+	            $("#follow thead").remove();
+	            $("#follow tr").remove();
+	            $("#follow th").remove();
+	            $("#follow tbody").remove();
+	            $("#follow td").remove();
+	            var tr;
+	             tr = $("<thead>");
+	             tr.append("<tr><th style='text-align:left'>Name & ID</th><th style='text-align:left'>Reason</th><th style='text-align:left'></th></tr>"); // bind table header row
+	             $("#follow").append(tr);
+	             tr.append("</thead>");
+	             $("#follow").append(tr);
+	             var tbody = $("<tbody>");
+	             $("#follow").append(tbody);
+	             $("#follow").append(tr);
+	             tr = $("<tr></tr>");
+	             
+	             for (var i = 0; i < data.firstname.length; i++) {
+	             	
+	                 tr = $("<tr class='highlight'></tr>");
+	                 tr.append("<td>" + data.firstname[i] + "-" +data.p_id[i]  + "</td><td>" +data.admission[i] + "</td><td><href='#'  data-rel='popup' onclick=\"editing1('" + data.admission[i] +"','" + data.p_id[i] +"','" + data.TotalTime[i] +"') \"><img src='images/edit.png' style='border: 0; float: left; margin-right: 15px' height='12' width='12' /></a>" + "</td>");
+	                
+	                 $("#follow").append(tr);
+	                 $('#follow').append(tbody);
 	             }
 	            	
 	            
@@ -161,7 +247,7 @@ var waiting=2;
 	 $('#patientid').change(function (){
    		 debugger;
    		 var patientid= $('#patientid').val();
-   		 var ids=1;
+   		 var ids=5;
    		 var i=1;
    		 $("label.error").hide();
    	  $(".error").removeClass("error");
@@ -174,32 +260,18 @@ var waiting=2;
 		 success: function(data){
 			 debugger;
 			 $("#submit").removeAttr('disabled');
-			 if((data.return1.length >= i) && (data.return2.length>=i) && (data.return3.length>=i)){
-				 if((data.return4[0]=="1") && (data.return5[0]=="0"))
-					 {
-					 jAlert("Patient "+data.return1[0]+" already Registered",'Alert',function(){  });							 
-					 $('#firstName').val(data.return1[0]);
+			 if((data.return1.length >= i)){				 											 
+					 $('#firstName').val(data.return2[0]);
 					 $("#firstName").attr("disabled", "disabled"); 
-					 $('#phoneNumber').val(data.return2[0]);
-					 $("#phoneNumber").attr("disabled", "disabled"); 									
-					 }
-				 else
-					 {
-			 $('#firstName').val(data.return1[0]);
-			 $('#phoneNumber').val(data.return2[0]);
-			 $("#submit1").hide();
-			 $('#example1').val(data.return3[0]);
-					 }
+					 $('#phoneNumber').val(data.return3[0]);
+					 $("#phoneNumber").attr("disabled", "disabled"); 														
 			 }
 			 else
 				 {
 				 debugger;
-				 $('#firstName').val('');
-				 $('#phoneNumber').val('');
-				 $('#example1').val('');
-				 $("#firstName").removeAttr('disabled');
-				 $("#phoneNumber").removeAttr('disabled');
-				 
+				 jAlert("Patient doesn't exists",'Alert',function(){$('#patientid').val('');  });	
+				 $("#firstName").attr("disabled", "disabled"); 
+				 $("#phoneNumber").attr("disabled", "disabled"); 	
 				 
 				 }
 								
@@ -209,7 +281,57 @@ error: function(XMLHttpRequest, textStatus, errorThrown) {
 	   
         
 		});		
-   	 });                
+   	 });            
+	 $("#drdesk1").validate({
+		rules:{
+			patientid:{
+	             	required:true,
+	             	 minlength: 1,
+                     maxlength: 12
+	             },
+	             datetimepicker: {
+                     required: true,
+                     
+                 },  
+		}, 
+		  errorPlacement: function(error, element) {
+	             if ( element.is(":radio") ) {
+	             	error.insertAfter( element.parent() );
+	             }
+	             else if(element.is(":checkbox"))
+	             {
+	             	error.insertBefore( element.parent() );
+	             }
+	             else { // This is the default behavior of the script
+	                 error.insertAfter( element );
+	             }
+	         },
+	         
+	         submitHandler: function(form) {
+	        	 $('#submit').attr('disabled',false);
+	      		debugger;
+	      		var pid = $("#patientid").val();
+	      		var appointment = $("#datetimepicker").val();
+	      		
+	      		$.ajax({
+	                      type: "GET",
+	                      contentType: "application/json; charset=utf-8",
+	                      url: localStorage.getItem('WcfURL')+"/appointment.php?pid="+pid+"&userid="+userid+"&appointment="+appointment,
+	      				data: "{}",
+	                     dataType: "JSON",
+	      			 success: function(data){
+	      				jAlert('Appointment booked successfully','Success',function(){ location.reload(true); });		
+	      			
+	      			
+	      			}	,
+	      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+	     	 jAlert('Error','Failure',function(){ location.reload(true); });
+	                  }	     		                    
+	      			});
+	      		return false; 
+	          },
+	 	 }); 
+	  
 	 $("#drdesk").validate({
          
          rules: {         	 
@@ -233,12 +355,16 @@ error: function(XMLHttpRequest, textStatus, errorThrown) {
          
          submitHandler: function(form) {
         	 $('#submit').attr('disabled',false);
-     		
-     		var pname = $('input[id="tblChk"]:checked').val();					
+     		debugger;
+     		var patient_name = $('input[id="tblChk"]:checked').val();	
+     		var admission = patient_name.substr(patient_name.indexOf("-") + 1);
+     		var sert = patient_name.split('-');
+     		var pid= sert[0];
+     		debugger;
      		$.ajax({
                      type: "GET",
                      contentType: "application/json; charset=utf-8",
-                     url: localStorage.getItem('WcfURL')+"/DrDesk.php?p_name="+pname+"&userid="+userid,
+                     url: localStorage.getItem('WcfURL')+"/DrDesk.php?p_name="+pid+"&userid="+userid+"&admission="+admission,
      				data: "{}",
                     dataType: "JSON",
      			 success: function(data){
@@ -255,9 +381,30 @@ error: function(XMLHttpRequest, textStatus, errorThrown) {
 	 }); 
 	}
 });
-
+function editing(e) {    
+    debugger;
+    var url = "PatientDetails.html";            
+    localStorage.setItem('pid', e);
+    $(location).attr('href', url);
+    }
+function editing1(e,e1,e2) {    
+    debugger;
+    var url = "followupdetails.html";     
+    localStorage.setItem('reason', e);
+    localStorage.setItem('pid', e1);
+    localStorage.setItem('ppid', e2);
+    $(location).attr('href', url);
+    }
 </script>
 <style type="text/css">
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
     .bs-example{
     	margin: 20px;
     }
@@ -351,24 +498,30 @@ margin-left: auto !important;
 			
 <div class="jumbotron" style="background-color : #FFFFFF ">  
         <div class="row">
-            <div class="col-md-11 col-md-offset-1">
+            <div class="col-md-12 col-md-offset-1">
                 <div class="login-panel panel panel-default" style="border-style: hidden;">
                     <div class="panel-heading">
                         <h3 class="panel-title" align="center">Doctor Desk</h3>
                     </div>
-                    <div class="panel-body">
+                   
                       
                         <div id="content">
     <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+        
         <li class="active"><a href="#red" data-toggle="tab">Assigned</a></li>
         <li><a href="#orange" data-toggle="tab">Waiting</a></li>
         <li><a href="#yellow" data-toggle="tab">Visited</a></li>
-        
+        <li><a href="#OutPatient1" data-toggle="tab">OutPatient</a></li>
+        <li ><a href="#followup" data-toggle="tab">FollowUp</a></li>
+        <li ><a href="#admission" data-toggle="tab">Appointment</a></li>
+         
     </ul>
     <div id="my-tab-content" class="tab-content">
-        <div class="tab-pane active" id="red">
-             <form id="drdesk">
-               <div class="form-group">
+          
+    <div class="tab-pane  " id="admission">
+    <form id="drdesk1" >
+    <fieldset>
+       <div class="form-group">
             <label class=" control-label" for="patientid">Patient Id</label>  
             <div class="">
               <input id="patientid" name="patientid" placeholder="Patient Id" class="form-control input-md" type="text">
@@ -394,9 +547,17 @@ margin-left: auto !important;
             <label class=" control-label" for="phoneNumber">Appointment date</label>  
             <div class="">
             
-              <input id="datetimepicker" name="datetimepicker" placeholder="MM/DD/YYYY" class="form-control input-md " type="text">              
+              <input id="datetimepicker" name="datetimepicker" placeholder="MM/DD/YYYY" class="form-control input-md dp" type="text">              
             </div>
           </div>
+           <br>
+        <button class="btn btn-lg btn-success btn-block" name="submit" id="submit1">Submit</button>
+    </fieldset>
+    </form>
+    </div>
+        <div class="tab-pane active" id="red">
+             <form id="drdesk">
+            
                <fieldset>
 							
 							 <div class="table-responsive">	
@@ -438,10 +599,39 @@ margin-left: auto !important;
 								<br>
 							
 								<br>
+								<table class="table borderless table-condensed table-striped" data-show-header="false" id="Visited" >	                        
+		                         </table> 
                                 <!-- Change this to a button or input when using this as a form -->                                
                                 <!--<a href="#" class="btn btn-lg btn-success btn-block" onclick="return btntest_onclick()">Submit</a>-->
                             </fieldset>
-        </div>      
+        </div>     
+        <div class="tab-pane" id="OutPatient1">
+            <fieldset>
+							<div class="table-responsive">	
+								<table class="table borderless table-condensed table-striped" data-show-header="false" id="OutPatient" >	                        
+		                         </table> 
+		                         </div>
+		                         <br>
+							
+								<br>
+                                <!-- Change this to a button or input when using this as a form -->                                
+                                <!--<a href="#" class="btn btn-lg btn-success btn-block" onclick="return btntest_onclick()">Submit</a>-->															
+                            </fieldset>
+        </div> 
+        
+         <div class="tab-pane" id="followup">
+            <fieldset>
+							<div class="table-responsive">	
+								<table class="table borderless table-condensed table-striped" data-show-header="false" id="follow" >	                        
+		                         </table> 
+		                         </div>
+		                         <br>
+							
+								<br>
+                                <!-- Change this to a button or input when using this as a form -->                                
+                                <!--<a href="#" class="btn btn-lg btn-success btn-block" onclick="return btntest_onclick()">Submit</a>-->															
+                            </fieldset>
+        </div> 
     </div>
 </div>
 
@@ -450,7 +640,7 @@ margin-left: auto !important;
             </div>
         </div>
 </div>		
-    </div>
+  
 
 
 </body>

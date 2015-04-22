@@ -6,12 +6,12 @@
 		<title>Login Form</title>
 		<meta name="generator" content="Bootply" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<link href="css/style.css" rel="stylesheet">
-		<script src="js/jquery.min.js"></script>
+		<script src="http://code.jquery.com/jquery-2.1.1.js"></script>    
 		<script src="js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="jquery-1.2.6.min.js"></script>
-		<script src="http://code.jquery.com/jquery-latest.js"></script>    
+	
+		
 		<script type="text/javascript" src="js/jquery.validate.min.js"></script>
 		<script type="text/javascript">
 		$(document).ready(function(){	
@@ -99,6 +99,16 @@
     			}
     			else if(roleid==7){
     				var url = "drdesk.html";
+    				  $(location).attr('href', url);
+    			}
+    			else if(roleid==10){
+    				
+    				var url = "admissionmanager.html";
+    				  $(location).attr('href', url);
+    			}
+else if(roleid==11){
+    				
+    				var url = "surgery.html";
     				  $(location).attr('href', url);
     			}
     			else

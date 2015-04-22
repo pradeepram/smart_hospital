@@ -54,8 +54,9 @@ var userid = localStorage.getItem('userid');
 	    var ur="index.html"
 	    $(location).attr('href', ur);
 	} else {
-		
-		
+		$("#UserName1").val('');
+		$("#UserName1").html("");
+		 $('#inputPassword')[0].type = 'text'; 
 	$("#departmentdiv").hide();
 	$("#doctordiv").hide();
 debugger;
@@ -103,6 +104,9 @@ $.ajax({
    	 
     }
 });
+$('#inputPassword').change(function (){
+	 $('#inputPassword')[0].type = 'password'; 
+});
 $('#inputEmail').change(function (){
 	var email = $("#inputEmail").val();	
 	var ids=1;
@@ -129,7 +133,7 @@ $('#inputEmail').change(function (){
 	    }
 	});
 });
-$('#UserName').change(function (){
+$('#UserName1').change(function (){
 	var uname = $("#UserName").val();
 	var ids=2;
 	$.ajax({
@@ -142,8 +146,11 @@ $('#UserName').change(function (){
 	       debugger;
 	       if(data.return1.length != 0)
 	    	   {
-	    	   jAlert('UserName Already Exists','Alert',function(){ $("#UserName").val(''); });  
+	    	   if(data.return1[0]!=""){
+	    	   jAlert('UserName Already Exists','Alert',function(){ $("#UserName1").val(''); });  
 	    	   }
+	    	   }
+	      
 	       else
 	    	   {
 	    	   
@@ -163,7 +170,7 @@ $('#Roles').change(function (){
 		{
 		debugger;
 		$("#departmentdiv").show();
-var id1=8;
+var id1=11;
 $.ajax({
     type: "GET",
     contentType: "text/plain",
@@ -259,9 +266,10 @@ $('#submit').click(function(){
 	$.validator.addMethod("alpha", function(value, element) {
 	    return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
 	 });
+	
 	jQuery.validator.addMethod("specialChar", function(value, element) {
-	     return this.optional(element) || /([0-9a-zA-Z\s])$/.test(value);
-	  }, "Please Fill Correct Value in Field.");
+	    return this.optional(element) || /^\w+$/i.test(value);
+	}, "Letters, numbers, and underscores only please");
 	 $("#userreg").validate({         
          rules: {
          	email: {
@@ -338,7 +346,7 @@ $('#submit').click(function(){
          	debugger;     					
 			var email = $("#inputEmail").val();	
 			
-			var uname = $("#UserName").val();	
+			var uname = $("#UserName1").val();	
 			var password = $("#inputPassword").val();	
 			var fname = $("#firstName").val();					
 			var phone = $("#phoneNumber").val();						
@@ -485,6 +493,12 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
                                  <li>
                                     <a href="Admin_ManageUser.html">Manage User</a>
                                 </li>
+                                  <li>
+                                    <a href="DrCharges.html">Dr Charges</a>
+                                </li>
+                                <li>
+                                    <a href="Bed.html">Beds</a>
+                                </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>                  
@@ -517,16 +531,16 @@ form label.error{font:10px Tahoma,sans-serif;color:#ED7476;margin-left:5px; disp
           </div>
                             
                               <div class="form-group">
-            <label class=" control-label" for="username">UserName</label>  
+            <label class=" control-label" for="UserName1">UserName</label>  
             <div class="">
-              <input id="UserName" name="username" placeholder="UserName" class="form-control input-md" type="text">
+              <input id="UserName1" name="username" placeholder="UserName" class="form-control input-md" type="text">
               
             </div>
           </div>
          <div class="form-group">
             <label class=" control-label" for="pwd">Password</label>  
             <div class="">
-              <input id="inputPassword" name="pwd" placeholder="Password" class="form-control input-md" type="password">
+              <input id="inputPassword" name="pwd" placeholder="Password" class="form-control input-md" type="password" >
               
             </div>
           </div>

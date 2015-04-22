@@ -29,7 +29,7 @@ $(document).ready(function () {
 	} else {
 	var username=localStorage.getItem('username');
 	  var s1="Welcome ";
-	  jQuery('#datetimepicker').datetimepicker();
+	  $('#datetimepicker').datetimepicker();
     $("#user").text(s1.concat(username));
 	$('.selectpicker').selectpicker();	 
 	 $('.dp').on('change', function () {
